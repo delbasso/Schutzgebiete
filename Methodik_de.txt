@@ -133,3 +133,18 @@ flächenübergreifende Aussage zu Bewirtschaftungsauflagen.
 
 
 Städtenamen: GeoNames cities500, https://www.geonames.org/ , CC BY 4.0; Abruf 19.10.2026. Ortspunkte, keine Stadtgrenzen. Deutschland und BW verwenden dieselbe Beschriftungslogik, aber jeweils eigene Koordinatenursprünge. Kleinere Orte erscheinen mit zunehmender Vergrößerung, Kollisionen werden vermieden. Sichtbare Namen werden in SVG/PNG und Druck übernommen. Einwohnerzahlen dienen nur zur Priorisierung, nicht als aktuelle Statistik.
+
+
+Nachtrag: Externer WSG-Abgleich am 19.10.2026
+
+Siehe Wasserschutz-Pruefung.html und Wasserschutz-Pruefung.json.
+Alle 16 Länder mit Studiengeometrien und Landesquellen verglichen; acht
+zusätzlich mit direkten Landes-GIS-Geometrien. Keine flächendeckende
+rechtliche Einzelfallprüfung. Studienpolygone ergeben auf unserer Grenze
+14,99 % als Summe und 14,11 % als Vereinigungsfläche. Die BfG-Auswahl
+festgesetzter Trinkwasserschutzgebiete reproduziert 11,13 %. Die Studie
+bezieht zusätzlich Gewinnungsgebiete in SH/NI ein. Weitere Unterschiede
+der Gebietsauswahl und Datenstände sind im Länderbericht ausgewiesen.
+Kein belegter Rechenfehler; gespeicherte Geometrien und Prozentwerte
+bleiben unverändert. Restabweichungen sind ausdrücklich keine bestätigte
+Vollständigkeit sämtlicher aktuellen Schutzgebietsverordnungen.

@@ -153,7 +153,7 @@ new ResizeObserver(()=>drawCities()).observe($('map'));
 function fitMapToViewport(){
  const header=document.querySelector('body>header'),top=document.querySelector('.workspace-top');
  // Document layout is independent of scroll position, so scrolling never resizes the map.
- const available=window.innerHeight-header.offsetHeight-top.offsetHeight-38;
+ const available=window.innerHeight-header.offsetHeight-18;
  document.documentElement.style.setProperty('--map-panel-height',Math.max(120,available)+'px');
 }
 new ResizeObserver(fitMapToViewport).observe(document.querySelector('body>header'));

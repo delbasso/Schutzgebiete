@@ -32,3 +32,14 @@ header{min-height:48px;padding:6px 20px;gap:12px}
 .workspace-top{min-height:36px;margin-bottom:6px}.workspace-top h2{font-size:20px}
 footer #sourcesBtn{padding:0;margin-bottom:8px;font-size:12px}
 @media(max-width:720px){header{padding:7px 12px;gap:6px}.brand{font-size:14px;flex-basis:100%}.scope-switch{gap:8px}.scope-switch .field{font-size:11px}.scope-switch select{font-size:12px;padding:5px 8px}.workspace-top{min-height:34px}.workspace-top h2{font-size:17px}.workspace{padding-top:6px}}
+
+/* Right-hand rail leaves the full vertical map area available. */
+.map-wrap{display:grid;grid-template-columns:minmax(0,1fr) 142px;padding-bottom:0}
+#map{grid-column:1;grid-row:1;min-width:0;min-height:0}
+.map-rail{grid-column:2;grid-row:1;background:#ffffffed;border-left:1px solid var(--line);padding:12px 10px;overflow:auto;min-height:0}
+.map-rail .exports{display:flex;flex-direction:column;gap:6px;margin-bottom:20px}
+.map-rail .exports button{width:100%;font-size:11px;padding:7px 8px}
+.map-rail .map-legend{position:static;display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:0;border:0;background:transparent;font-size:10px;min-height:0}
+.map-caption{bottom:8px;max-width:calc(100% - 170px)}.hover-label{right:154px}
+#loadStatus{right:154px}
+@media(max-width:720px){.map-wrap{grid-template-columns:minmax(0,1fr) 92px;padding-bottom:0}.map-rail{padding:8px 5px}.map-rail .exports button{font-size:10px;padding:6px 3px}.map-rail .map-legend{font-size:9px;gap:10px}.map-rail .map-legend span{gap:4px;flex-wrap:wrap}.hover-label{right:100px;max-width:calc(100% - 150px)}#loadStatus{left:8px;right:100px}.map-tools{top:8px;left:8px}}

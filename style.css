@@ -3,3 +3,5 @@
 @media print{body>header,main,.controls,dialog,#toast{display:none!important}body{background:white}#printOutput{display:block!important;width:100%}#printOutput svg{width:100%;height:auto}@page{size:A4 landscape;margin:8mm}}#printOutput{display:none}
 
 .brand{font-size:20px;letter-spacing:0;font-weight:600;line-height:1.3}.brand small{font-size:14px;margin-top:5px}.site-title{display:block}@media(max-width:720px){.brand{font-size:16px;max-width:68%}.brand small{font-size:12px}header{min-height:86px;height:auto;padding-top:12px;padding-bottom:12px}}
+
+[hidden]{display:none!important}

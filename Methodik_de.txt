@@ -1,0 +1,135 @@
+Deutschland-Flächenatlas – Methoden und Grenzen
+Erstellt am 19.10.2026
+
+1. Zwei Kartenansichten, zwei dokumentierte Schutzkulissen
+
+Die Deutschlandansicht umfasst die Bundesrepublik, 16 Bundesländer und 401
+Landkreise/kreisfreie Städte des VG250-Grenzstands 01.01.2026. Hanau ist in
+dieser Ausgabe bereits kreisfrei. Die Bezugsfläche verwendet GF=4; Meer,
+AWZ und Bodensee sind nicht enthalten, andere Binnengewässer dagegen schon.
+Die Auswahl ist deshalb keine reine trockene Landfläche.
+
+Die bisherige Baden-Württemberg-Detailansicht bleibt mit den LUBW-Schutzdaten,
+FIONA 2022 und LBM-DE 2021 erhalten. Ihre Daten und Ergebnisse wurden nicht
+durch die Bundeskulisse ersetzt. Baden-Württemberg in der Deutschlandansicht
+verwendet BfN/BfG. Unterschiede zwischen diesen Ansichten sind daher möglich.
+Die genaue BW-Methodik steht in Methodik_bw.txt.
+
+2. Naturschutzgebiete
+
+Quelle: Bundesamt für Naturschutz, nach Angaben der Bundesländer.
+https://geodienste.bfn.de/ogc/wfs/schutzgebiet?REQUEST=GetCapabilities&SERVICE=WFS&VERSION=2.0.0
+Die aktuelle Dienstbeschreibung nennt für NSG den Datenstand 2024. Ältere
+Katalogbeschreibungen nennen 2023 und wurden nicht als maßgeblich übernommen.
+Abruf: 19.10.2026. Vollständiger WFS-Abruf: 9.035 Features, eindeutige OBJECTID
+und gemeldete Gesamtzahl geprüft. Mehrere Features können zu einem benannten
+Schutzgebiet gehören; Featurezahl ist deshalb nicht gleich Gebietsanzahl.
+
+Auswahl: STATUS=1, 9.003 Features. Die 32 Features mit STATUS=2 wurden nicht
+einbezogen. Deren Verordnungstexte verweisen häufig auf einstweilige Sicherung;
+es gibt aber auch abweichende Einträge. Eine explizite amtliche Codezuordnung
+konnte nicht unabhängig belegt werden. Daher wird keine aktuelle rechtliche
+Einzelfallklassifikation aus diesem Code behauptet. Die Auswahl ist eine
+offengelegte Beschränkung des Atlas und kein vollständiges Rechtskataster.
+Marine Anteile werden durch die verwendete Gebietsgrenze ausgeschlossen.
+
+19 ungültige NSG-Geometrien wurden mit make_valid repariert. Die Summe der
+absoluten Flächenänderungen beträgt lediglich rund 0,000000303 Quadratmeter.
+Nutzungsgrundlage laut BfN-Metadaten: GeoNutzV; Quellenangabe BfN nach Angaben
+der Länder, Abruf 19.10.2026.
+
+3. Wasserschutzgebiete
+
+Quelle: WasserBLIcK/BfG und Zuständige Behörden der Länder, 19.10.2026.
+https://geoportal.bafg.de/inspire/download/AM/waterProtectionArea/datasetfeed.xml
+https://geoportal.bafg.de/inspire/download/AM/waterProtectionArea/AM_waterProtectionArea-DE_GDB.zip
+
+Layer AM_drinkingWaterProtectionArea_DE: 29.119 Features. Ausgewählt wurden
+25.102 festgesetzte Trinkwasserschutzgebiets-Features, AREASTATUS=F,
+PROT_TYPE=T, mit 17.371 eindeutigen EU_CD_PD. F=festgesetzt und P=in Planung/
+in Verfahren sind durch die Codeliste im Originalarchiv belegt. 4.017 geplante
+Features sowie der separate Heilquellenschutzgebiets-Layer sind ausgeschlossen.
+Alle 16 Länder sind in der tatsächlichen Lieferung vertreten. Katalogtexte,
+die fehlende Länder nennen, widersprechen der heruntergeladenen Datei.
+Dies belegt die räumliche Präsenz, nicht einen vollständig aktuellen Rechtsstand.
+Keine leeren, fehlenden oder ungültigen ausgewählten WSG-Geometrien.
+
+Feed aktualisiert 07.10.2026; Abruf 19.10.2026. Lieferdaten unterscheiden sich:
+BB 23.04.2026; BE 21.02.2025; BW 23.03.2026; BY 23.09.2026;
+HB 30.08.2024; HE 24.03.2026; HH 04.07.2022; MV 04.06.2025;
+NI 04.06.2026; NW 27.06.2025; RP 17.03.2025; SH 03.05.2024;
+SL 23.07.2026; SN 31.12.2017 bis 30.06.2025; ST 31.12.2025;
+TH 06.08.2021. Lieferdatum ist nicht zwingend der Rechts- oder Erfassungsstand.
+Metadaten nennen CC BY 4.0 und GeoNutzV. Quellenangabe wie oben.
+
+4. Landwirtschaft und Ackerland
+
+Bundesweite Grundlage: LBM-DE 2021, © BKG (2026), CC BY 4.0.
+https://sgx.geodatenzentrum.de/web_public/gdz/dokumentation/deu/lbm-de2021.pdf
+Originaldaten:
+https://daten.gdz.bkg.bund.de/produkte/dlm/lbm-de_2021/aktuell/lbm-de2021.utm32s.gpkg.zip
+
+Definition A: Landwirtschaft = LN_AKT N211 oder N214 (intensive und extensive
+landwirtschaftliche Nutzung); Ackerland = LB_AKT B211 innerhalb dieser Auswahl.
+Definition B: Landwirtschaft = nur N211; Ackerland = B211 innerhalb N211.
+Das sind geografische Annäherungen. Sie sind nicht mit agrarstatistischer LF
+gleichzusetzen. Sonderkulturen wie Hopfen (B224) werden nicht automatisch der
+hier verwendeten B211-Ackerklasse zugeschlagen. N214 kann auch Flächen mit
+Naturschutzmahd oder aufgegebene Rebflächen enthalten.
+FIONA ist ausschließlich in der BW-Detailansicht verfügbar und wird nicht
+auf andere Länder oder ganz Deutschland hochgerechnet.
+
+5. Exakte Flächenberechnung
+
+Alle Flächen werden flächentreu in EPSG:3035 berechnet. Originalpolygone werden
+auf die disjunkten VG250-Kreise zugeschnitten. Innerhalb jedes Kreises werden
+Landnutzungspolygone auf nichtüberlappenden 5-km-Kacheln vereinigt und mit
+NSG und WSG verschnitten. Damit werden Überlappungen innerhalb einer Kategorie
+nur einmal gezählt. Für Statistikberechnungen gibt es keine Vereinfachung,
+Rasterisierung oder Koordinatenrundung. Raster dienen ausschließlich der Anzeige.
+
+NSG ∪ WSG = NSG + WSG − NSG ∩ WSG.
+Anteil = geschützte Fläche / jeweilige Bezugsfläche × 100.
+Länder- und Bundeswerte entstehen durch Addition der Kreisflächen, nicht durch
+Mittelung von Prozenten. Die Kreisvereinigung wurde für jedes Bundesland gegen
+die Landesgrenze geprüft; Differenzen und Überlappungen sind kleiner als 1 m².
+Die Flächenidentitäten und Obergrenzen werden für jede Region/Definition geprüft.
+Die CSV enthält mehrere Gebietsebenen; Deutschland, Länder und Kreise dürfen
+nicht gemeinsam aufsummiert werden, da die Flächen dann mehrfach enthalten sind.
+
+6. Darstellung und Export
+
+Deutschland: Landwirtschaft/Ackerland als 100-m-Raster im Zellmittelpunktverfahren,
+auf GF4 zugeschnitten. Grenzen für die Anzeige mit 50 m Toleranz vereinfacht,
+Koordinaten auf 10 m gerundet. BW-Detailansicht weiterhin 50-m-Raster und 20 m
+Vereinfachung. Kleine/schmale Flächen können in der Darstellung fehlen.
+SVG enthält Schutz-/Verwaltungsgrenzen als Vektoren und Landwirtschaft als
+eingebettete PNG-Raster. Es ist somit kein vollständig vektorieller Export.
+PNG hat 3200 × 2400 Pixel. Ausschnitt, sichtbare Ebenen, Statistik, Maßstab,
+Definition und Quellenhinweise werden mit exportiert. Quellenlinks stehen in
+den SVG-Metadaten; im Dashboard sind sie direkt anklickbar.
+Kennzahlen beziehen sich auf das ausgewählte Gebiet, nicht auf den verschobenen
+Kartenausschnitt. Die obere Kennzahlenreihe folgt der NSG-/WSG-Ebenenauswahl;
+die Tabelle zeigt stets alle Schutztypen.
+
+7. Eigene Definitionen
+
+JSON-Vorlagen sind je Kartenansicht getrennt (BW bzw. DE). Ein Import muss die
+gleichen Grenzen und die gleiche Schutzkulisse verwenden. Geprüft werden
+Gebietskennungen, Flächenobergrenzen und Vereinigungsidentitäten. Eigene Daten
+sind als ungeprüft gekennzeichnet und haben keine Landwirtschaftsgeometrie.
+Der Import verändert keine amtlichen Daten, löst keine GIS-Neuberechnung aus
+und wird nur für die aktuelle Sitzung gehalten. Keine automatische Aktualisierung.
+
+8. Verwaltungsdaten und Quellenangaben
+
+VG250 01.01.2026: © BKG (2026), dl-de/by-2-0.
+https://gdz.bkg.bund.de/index.php/default/verwaltungsgebiete-1-250-000-stand-01-01-vg250-01-01.html
+https://sgx.geodatenzentrum.de/web_public/gdz/datenquellen/datenquellen_vg_nuts.pdf
+
+Die Karte ist eine dokumentierte räumliche Auswertung unterschiedlicher
+Datenstände. Sie ist weder eine verbindliche Schutzgebietsauskunft noch eine
+flächenübergreifende Aussage zu Bewirtschaftungsauflagen.
+
+
+Städtenamen: GeoNames cities500, https://www.geonames.org/ , CC BY 4.0; Abruf 19.10.2026. Ortspunkte, keine Stadtgrenzen. Deutschland und BW verwenden dieselbe Beschriftungslogik, aber jeweils eigene Koordinatenursprünge. Kleinere Orte erscheinen mit zunehmender Vergrößerung, Kollisionen werden vermieden. Sichtbare Namen werden in SVG/PNG und Druck übernommen. Einwohnerzahlen dienen nur zur Priorisierung, nicht als aktuelle Statistik.

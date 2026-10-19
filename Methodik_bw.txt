@@ -171,3 +171,6 @@ SVG/PNG und Druck übernehmen genau die in der aktuellen Ansicht platzierten Nam
 Der Städtenamen-Layer lässt sich unabhängig von Kreisnamen ausschalten.
 Für diese BW-Seite werden nur places-bw.js und das Beschriftungsmodul geladen (ca. 60 kB).
 places-de.js ist separat für die spätere Deutschland-Ansicht vorbereitet, wird hier nicht geladen.
+
+
+Städtenamen: GeoNames cities500, https://www.geonames.org/ , CC BY 4.0; Abruf 19.10.2026. Ortspunkte, keine Stadtgrenzen. Deutschland und BW verwenden dieselbe Beschriftungslogik, aber jeweils eigene Koordinatenursprünge. Kleinere Orte erscheinen mit zunehmender Vergrößerung, Kollisionen werden vermieden. Sichtbare Namen werden in SVG/PNG und Druck übernommen. Einwohnerzahlen dienen nur zur Priorisierung, nicht als aktuelle Statistik.

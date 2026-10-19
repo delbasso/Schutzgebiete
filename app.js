@@ -4,8 +4,9 @@ const BW_DATA=D;
 D.root='BW';D.rootName='Baden-Württemberg';D.states=[];D.rasterSize=50;D.defaultDefinition='fiona';
 D.boundary='VG250-2026-GF4-BW';D.protection='LUBW-2026-10-19-verordnet-festgesetzt';
 const $=id=>document.getElementById(id), NS='http://www.w3.org/2000/svg';
+const defaultVisibleLayers=new Set(['nsg','wsg','overlap','agriculture','arable']);
 const layerIds=['stateLines','nsg','wsg','overlap','agriculture','arable','county','labels','cities'];
-for(const id of layerIds)$(id).checked=false;
+for(const id of layerIds)$(id).checked=defaultVisibleLayers.has(id);
 const state={definition:'fiona',region:'BW',view:[...D.bounds],drag:null};
 const colors={NSG:'#d34b45',WSG:'#3684c4',BOTH:'#8051aa',AGRICULTURE:'#74a180',ARABLE:'#d8ad51'};
 const titles={NSG:'Naturschutzgebiete',WSG:'Wasserschutzgebiete',BOTH:'Naturschutzgebiet ∩ Wasserschutzgebiet',EITHER:'Wasser- oder Naturschutzgebiet'};
@@ -96,7 +97,7 @@ $('scope').onchange=e=>switchScope(e.target.value);
 fillRegions();
 $('definition').addEventListener('change',async e=>{const data=D,key=e.target.value;$('definition').disabled=true;try{await ensureRasters(data,key);if(data===D){state.definition=key;render()}}catch(err){$('definition').value=state.definition;toast(err.message)}finally{$('definition').disabled=false}});$('region').addEventListener('change',e=>chooseRegion(e.target.value));
 for(const id of layerIds)$(id).addEventListener('change',render);$('opacity').addEventListener('input',render);
-$('defaults').onclick=()=>{for(const id of layerIds)$(id).checked=false;$('opacity').value=80;render()};
+$('defaults').onclick=()=>{for(const id of layerIds)$(id).checked=defaultVisibleLayers.has(id);$('opacity').value=80;render()};
 function zoom(factor,point){const [x,y,w,h]=state.view;const nw=Math.max(2,Math.min(D.bounds[2]*1.6,w*factor)),k=nw/w;const p=point||{x:x+w/2,y:y+h/2};setView([p.x+(x-p.x)*k,p.y+(y-p.y)*k,nw,h*k])}
 $('zoomIn').onclick=()=>zoom(.75);$('zoomOut').onclick=()=>zoom(1.3);$('resetView').onclick=()=>chooseRegion(D.root);
 function point(e){return new DOMPoint(e.clientX,e.clientY).matrixTransform($('map').getScreenCTM().inverse())}

@@ -7,7 +7,7 @@ const $=id=>document.getElementById(id), NS='http://www.w3.org/2000/svg';
 const layerIds=['stateLines','nsg','wsg','overlap','agriculture','arable','county','labels','cities'];
 const state={definition:'fiona',region:'BW',view:[...D.bounds],drag:null};
 const colors={NSG:'#d34b45',WSG:'#3684c4',BOTH:'#8051aa',AGRICULTURE:'#74a180',ARABLE:'#d8ad51'};
-const titles={NSG:'Naturschutzgebiete',WSG:'Wasserschutzgebiete',BOTH:'Naturschutzgebiet ∩ Wasserschutzgebiet',EITHER:'Mindestens eines'};
+const titles={NSG:'Naturschutzgebiete',WSG:'Wasserschutzgebiete',BOTH:'Naturschutzgebiet ∩ Wasserschutzgebiet',EITHER:'Wasser- oder Naturschutzgebiet'};
 const format=(v,d=0)=>new Intl.NumberFormat('de-DE',{maximumFractionDigits:d,minimumFractionDigits:d}).format(v);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 let sources=[
@@ -15,7 +15,7 @@ let sources=[
  ['Wasserschutzgebiete · LUBW','Festgesetzte WSG; geplante und aufgehobene Gebiete ausgeschlossen. Grundlage: Daten aus dem Umweltinformationssystem (UIS) der LUBW Landesanstalt für Umwelt Baden-Württemberg.','https://rips-metadaten.lubw.de/trefferanzeige?docuuid=ec2d7bcc-1f56-4596-bbc0-459ddb6a1a82','Metadaten & amtlicher Zugang'],
  ['Antragsflächen 2022 · FIONA','Landwirtschaft = AL + GL + DK, Ackerland = AL. Datengrundlage: MLR (2026), dl-de/by-2-0. Nur veröffentlichte, räumlich auswertbare Antragsflächen.','https://owsproxy.lgl-bw.de/owsproxy/wfs/WFS_LW-BW_FIONA_Flaecheninformation?REQUEST=GetCapabilities&SERVICE=WFS','Amtlicher Geodatendienst'],
  ['Nutzcodeliste 2022 · MLR','Förderrechtliche Definitionen einschließlich zugeordneter Brachen und Landschaftselemente.','https://foerderung.landwirtschaft-bw.de/site/pbs-bw-rebrush2024/get/documents_E-178798993/MLR.LEL/PB5Documents/mlr/GA/GA_022_intern/fiona-archiv/2022/Merkblaetter/GA%20-%20Nutzcodeliste%202022.pdf','Nutzcodeliste (PDF)'],
- ['Landbedeckungsmodell 2021 · BKG','Landwirtschaft = N211 + N214; Ackerland = B211 innerhalb dieser Fläche. Geografische Näherung; keine statistische LF. © BKG (2026), CC BY 4.0.','https://sgx.geodatenzentrum.de/web_public/gdz/dokumentation/deu/lbm-de2021.pdf','Dokumentation (PDF)'],
+ ['Landbedeckungsmodell 2021 · BKG','Landwirtschaft = N211 + N214; Ackerland = B211 innerhalb dieser Fläche. Geografische Flächenabgrenzung; abweichend von der amtlichen Agrarstatistik. © BKG (2026), CC BY 4.0.','https://sgx.geodatenzentrum.de/web_public/gdz/dokumentation/deu/lbm-de2021.pdf','Dokumentation (PDF)'],
  ['Verwaltungsgebiete VG250 · BKG','Land- und Stadtkreise sowie Landesfläche: Stand 01.01.2026, GF=4, ohne Bodensee. © BKG (2026), dl-de/by-2-0.','https://gdz.bkg.bund.de/index.php/default/verwaltungsgebiete-1-250-000-stand-01-01-vg250-01-01.html','Amtliche Verwaltungsgrenzen']
 ];
 const BW_SOURCES=sources;
@@ -115,11 +115,11 @@ function exportSvg(){
  const p=currentProtection(),def=definition();const text=(x,y,s,size=18,weight=400)=>`<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}">${esc(s)}</text>`;
  const scale=Math.min(1020/state.view[2],930/state.view[3]);const distance=[.5,1,2,5,10,20,50,100].filter(d=>d*scale<=180).pop()||.5;
  const scaleBar=`<rect x="55" y="1015" width="${distance*scale+25}" height="51" fill="white" opacity=".9"/><path d="M65 1046h${distance*scale}M65 1041v10M${65+distance*scale} 1041v10" fill="none" stroke="#233c36" stroke-width="2"/>${text(65,1035,format(distance, distance<1?1:0)+' km',14)}`;
- let side=text(1100,185,'Sichtbare Schutzkulisse',22,700)+text(1100,218,p?titles[p]:'Keine Schutzgebiete',18);
+ let side=text(1100,185,'Sichtbare Schutzkulisse',22,700)+text(1100,218,p?titles[p]:'Keine Schutzgebiete',18)+(p==='EITHER'?text(1100,242,'Überschneidungen nur einmal gezählt.',14):'');
  let y=270;for(const [cat,label] of [['TOTAL','Gesamtfläche'],['AGRICULTURE','Landwirtschaft'],['ARABLE','Ackerland']]){const r=row(cat,p||'EITHER');side+=text(1100,y,label,18)+text(1100,y+44,r?pct(p?percentage(cat,p):0):'Keine Daten',34,600)+text(1100,y+73,r?`${format(p?r.protected_ha:0)} / ${format(r.denominator_ha)} ha`:'',15);y+=125}
  side+=text(1100,695,'Sichtbare Ebenen',20,700);y=730;for(const [id,key,label] of [['agriculture','AGRICULTURE',`Landwirtschaft (${D.rasterSize} m)`],['arable','ARABLE',`Ackerland (${D.rasterSize} m)`],['nsg','NSG','Naturschutzgebiete'],['wsg','WSG','Wasserschutzgebiete'],['overlap','BOTH','Naturschutzgebiet ∩ Wasserschutzgebiet']]){if($(id).checked&&(key!=='BOTH'||($('nsg').checked&&$('wsg').checked))&&(!['AGRICULTURE','ARABLE'].includes(key)||def.rasters)){side+=`<rect x="1100" y="${y-13}" width="16" height="16" fill="${colors[key]}"/>`+text(1127,y,label,16);y+=30}}
  if($('cities').checked)side+=text(1100,900,'● Städtenamen · GeoNames',16);
- side+=text(1100,920,'Definition: '+def.title,14)+text(1100,950,'Keine Gleichsetzung mit statistischer LF.',15)+text(1100,980,'Schutzgebiete: Abruf 19.10.2026',15);
+ side+=text(1100,920,'Definition: '+def.title,14)+text(1100,980,'Schutzgebiete: Abruf 19.10.2026',15);
  const meta=JSON.stringify({definition:def.title,region:regionName(),sources:[...sources.map(s=>({title:s[0],url:s[2]})),...(def.sources||[])],scope:def.note,cityLabels:$('cities').checked?{source:'GeoNames',license:'CC BY 4.0',ids:[...clone.querySelectorAll('[data-place]')].map(e=>e.getAttribute('data-place'))}:null});
  return `<svg xmlns="${NS}" width="1600" height="1200" viewBox="0 0 1600 1200"><metadata>${esc(meta)}</metadata><rect width="1600" height="1200" fill="white"/><g font-family="Arial, sans-serif" fill="#233c36">${text(40,55,'Wasser- und Naturschutzgebiete',34,700)}${text(40,96,regionName(),22)}${new XMLSerializer().serializeToString(clone)}${scaleBar}${side}${text(40,1120,(D.root==='DE'?'WasserBLIcK/BfG & Länder, 19.10.2026 · BfN nach Angaben der Länder · © BKG (2026) · CC BY 4.0 / dl-de/by-2-0 · Eigene Auswertung':'Grundlage: UIS der LUBW · MLR (2026), dl-de/by-2-0 · © BKG (2026), dl-de/by-2-0 / LBM: CC BY 4.0 · Eigene Auswertung'),14)}${text(40,1148,`Landwirtschaftsdarstellung: ${D.rasterSize}-m-Raster. Grenzen zur Anzeige vereinfacht; Flächenwerte aus unvereinfachten Geometrien.`,14)}${text(40,1176,'Ortsnamen: GeoNames (CC BY 4.0), geonames.org · VG250 GF4 ohne Meer/Bodensee. Quellenlinks in SVG-Metadaten.',14)}</g></svg>`;
 }

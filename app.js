@@ -1,12 +1,13 @@
 'use strict';
 const D=window.ATLAS, $=id=>document.getElementById(id), NS='http://www.w3.org/2000/svg';
-const layerIds=['nsg','wsg','overlap','agriculture','arable','county','labels'];
+const layerIds=['nsg','wsg','overlap','agriculture','arable','county','labels','cities'];
 const state={definition:'fiona',region:'BW',view:[...D.bounds],drag:null};
 const colors={NSG:'#d34b45',WSG:'#3684c4',BOTH:'#8051aa',AGRICULTURE:'#74a180',ARABLE:'#d8ad51'};
 const titles={NSG:'Naturschutzgebiete',WSG:'Wasserschutzgebiete',BOTH:'Beide zugleich',EITHER:'Mindestens eines'};
 const format=(v,d=0)=>new Intl.NumberFormat('de-DE',{maximumFractionDigits:d,minimumFractionDigits:d}).format(v);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
 const sources=[
+ ['Städte und Orte · GeoNames','Ortspunkte und Namen aus cities500, Abruf 19.10.2026; CC BY 4.0. Auswahl nach Maßstab und Platz. Einwohnerzahlen dienen nur der Beschriftungspriorität, nicht als aktuelle Statistik. Keine Stadtgrenzen; keine vollständige Ortsliste.','https://www.geonames.org/export/','Quelle und Download'],
  ['Naturschutzgebiete · LUBW','Verordnete NSG; vollständig abgerufen am 19.10.2026. Datenlizenz Deutschland Zero 2.0.','https://rips-metadaten.lubw.de/trefferanzeige?docuuid=1a6a350d-97b6-4c73-8558-704d9fe8a29e','Metadaten & amtlicher Zugang'],
  ['Wasserschutzgebiete · LUBW','Festgesetzte WSG; geplante und aufgehobene Gebiete ausgeschlossen. Grundlage: Daten aus dem Umweltinformationssystem (UIS) der LUBW Landesanstalt für Umwelt Baden-Württemberg.','https://rips-metadaten.lubw.de/trefferanzeige?docuuid=ec2d7bcc-1f56-4596-bbc0-459ddb6a1a82','Metadaten & amtlicher Zugang'],
  ['Antragsflächen 2022 · FIONA','Landwirtschaft = AL + GL + DK, Ackerland = AL. Datengrundlage: MLR (2026), dl-de/by-2-0. Nur veröffentlichte, räumlich auswertbare Antragsflächen.','https://owsproxy.lgl-bw.de/owsproxy/wfs/WFS_LW-BW_FIONA_Flaecheninformation?REQUEST=GetCapabilities&SERVICE=WFS','Amtlicher Geodatendienst'],
@@ -22,7 +23,8 @@ function percentage(cat,p){const r=row(cat,p);return r&&r.denominator_ha>0?100*r
 function pct(v){return v===null?'–':format(v,2)+' %'}
 function toast(s){$('toast').textContent=s;$('toast').hidden=false;clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>$('toast').hidden=true,4500)}
 function svgEl(tag,attrs={}){const e=document.createElementNS(NS,tag);for(const [k,v] of Object.entries(attrs))e.setAttribute(k,v);return e}
-function setView(v){state.view=v;$('map').setAttribute('viewBox',v.join(' '))}
+function drawCities(){window.PlaceLabels.draw($('map'),{data:window.ATLAS_PLACES,transform:D.placeTransform||window.ATLAS_PLACE_MAP,view:state.view,enabled:$('cities').checked})}
+function setView(v){state.view=v;$('map').setAttribute('viewBox',v.join(' '));drawCities()}
 function padded(b,p=.07){return [b[0]-b[2]*p,b[1]-b[3]*p,b[2]*(1+2*p),b[3]*(1+2*p)]}
 function drawMap(){
  const svg=$('map');svg.replaceChildren();
@@ -48,7 +50,7 @@ function updateStats(){
  $('opacityValue').textContent=$('opacity').value+' %';
  const legend=document.querySelector('.map-legend');legend.replaceChildren();for(const [id,key,label]of [['agriculture','AGRICULTURE','Landwirtschaft'],['arable','ARABLE','Ackerland'],['nsg','NSG','NSG'],['wsg','WSG','WSG'],['overlap','BOTH','Beide']]){if(!$(id).checked||(key==='BOTH'&&(!$('nsg').checked||!$('wsg').checked))||(['AGRICULTURE','ARABLE'].includes(key)&&!def.rasters))continue;const span=document.createElement('span'),i=document.createElement('i');i.style.setProperty('--swatch',colors[key]);span.append(i,document.createTextNode(label));legend.append(span)}
 }
-function render(){drawMap();updateStats()}
+function render(){drawMap();updateStats();drawCities()}
 function chooseRegion(id,zoom=true){state.region=id;$('region').value=id;if(zoom)setView(padded(id==='BW'?D.bounds:D.counties.find(c=>c.id===id).bounds,.12));render()}
 for(const c of [...D.counties].sort((a,b)=>a.name.localeCompare(b.name,'de'))){const o=document.createElement('option');o.value=c.id;o.textContent=c.name+' · '+c.kind;$('region').append(o)}
 $('definition').addEventListener('change',e=>{state.definition=e.target.value;render()});$('region').addEventListener('change',e=>chooseRegion(e.target.value));
@@ -69,15 +71,17 @@ function download(blob,name){const a=document.createElement('a');a.href=URL.crea
 function exportSvg(){
  const clone=$('map').cloneNode(true);clone.removeAttribute('id');clone.removeAttribute('tabindex');clone.removeAttribute('role');clone.setAttribute('x','30');clone.setAttribute('y','150');clone.setAttribute('width','1020');clone.setAttribute('height','930');
  clone.querySelectorAll('.county-hit').forEach(e=>{e.removeAttribute('class');e.removeAttribute('data-county')});clone.querySelectorAll('.county-label').forEach(e=>{e.setAttribute('font-family','Arial, sans-serif');e.setAttribute('fill','#233c36');e.setAttribute('stroke','#fff');e.setAttribute('stroke-width','.6');e.setAttribute('paint-order','stroke')});
+ window.PlaceLabels.draw(clone,{data:window.ATLAS_PLACES,transform:D.placeTransform||window.ATLAS_PLACE_MAP,view:state.view,enabled:$('cities').checked,exportSize:[1020,930],visibleIds:new Set([...$('map').querySelectorAll('[data-place]')].map(e=>e.getAttribute('data-place')))});
  const p=currentProtection(),def=definition();const text=(x,y,s,size=18,weight=400)=>`<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}">${esc(s)}</text>`;
  const scale=Math.min(1020/state.view[2],930/state.view[3]);const distance=[.5,1,2,5,10,20,50,100].filter(d=>d*scale<=180).pop()||.5;
  const scaleBar=`<rect x="55" y="1015" width="${distance*scale+25}" height="51" fill="white" opacity=".9"/><path d="M65 1046h${distance*scale}M65 1041v10M${65+distance*scale} 1041v10" fill="none" stroke="#233c36" stroke-width="2"/>${text(65,1035,format(distance, distance<1?1:0)+' km',14)}`;
  let side=text(1100,185,'Sichtbare Schutzkulisse',22,700)+text(1100,218,p?titles[p]:'Keine Schutzgebiete',18);
  let y=270;for(const [cat,label] of [['TOTAL','Gesamtfläche'],['AGRICULTURE','Landwirtschaft'],['ARABLE','Ackerland']]){const r=row(cat,p||'EITHER');side+=text(1100,y,label,18)+text(1100,y+44,r?pct(p?percentage(cat,p):0):'Keine Daten',34,600)+text(1100,y+73,r?`${format(p?r.protected_ha:0)} / ${format(r.denominator_ha)} ha`:'',15);y+=125}
  side+=text(1100,695,'Sichtbare Ebenen',20,700);y=730;for(const [id,key,label] of [['agriculture','AGRICULTURE','Landwirtschaft (50 m)'],['arable','ARABLE','Ackerland (50 m)'],['nsg','NSG','Naturschutzgebiete'],['wsg','WSG','Wasserschutzgebiete'],['overlap','BOTH','Überschneidung']]){if($(id).checked&&(key!=='BOTH'||($('nsg').checked&&$('wsg').checked))&&(!['AGRICULTURE','ARABLE'].includes(key)||def.rasters)){side+=`<rect x="1100" y="${y-13}" width="16" height="16" fill="${colors[key]}"/>`+text(1127,y,label,16);y+=30}}
+ if($('cities').checked)side+=text(1100,900,'● Städtenamen · GeoNames',16);
  side+=text(1100,920,'Definition: '+(def.custom?'eigene Ergebnisdaten':state.definition==='fiona'?'Förderanträge 2022':'Landbedeckung 2021'),16)+text(1100,950,'Keine Gleichsetzung mit statistischer LF.',15)+text(1100,980,'Schutzgebiete: Abruf 19.10.2026',15);
- const meta=JSON.stringify({definition:def.title,region:regionName(),sources:def.sources||sources.map(s=>({title:s[0],url:s[2]})),scope:def.note});
- return `<svg xmlns="${NS}" width="1600" height="1200" viewBox="0 0 1600 1200"><metadata>${esc(meta)}</metadata><rect width="1600" height="1200" fill="white"/><g font-family="Arial, sans-serif" fill="#233c36">${text(40,55,'Wasser- und Naturschutzgebiete',34,700)}${text(40,96,regionName()+' · '+def.title,22)}${new XMLSerializer().serializeToString(clone)}${scaleBar}${side}${text(40,1120,'Grundlage: UIS der LUBW · MLR (2026), dl-de/by-2-0 · © BKG (2026), dl-de/by-2-0 / LBM: CC BY 4.0 · Eigene Auswertung',14)}${text(40,1148,'Landwirtschaftsdarstellung: 50-m-Raster. Schutzgebietsgrenzen zur Anzeige vereinfacht; Flächenwerte aus unvereinfachten Geometrien.',14)}${text(40,1176,'Bezugsfläche ohne Bodensee. Keine automatische Aktualisierung. Quellenlinks sind in den SVG-Metadaten enthalten.',14)}</g></svg>`;
+ const meta=JSON.stringify({definition:def.title,region:regionName(),sources:[...sources.map(s=>({title:s[0],url:s[2]})),...(def.sources||[])],scope:def.note,cityLabels:$('cities').checked?{source:'GeoNames',license:'CC BY 4.0',retrieved:'2026-10-19',ids:[...clone.querySelectorAll('[data-place]')].map(e=>e.getAttribute('data-place'))}:null});
+ return `<svg xmlns="${NS}" width="1600" height="1200" viewBox="0 0 1600 1200"><metadata>${esc(meta)}</metadata><rect width="1600" height="1200" fill="white"/><g font-family="Arial, sans-serif" fill="#233c36">${text(40,55,'Wasser- und Naturschutzgebiete',34,700)}${text(40,96,regionName(),22)}${new XMLSerializer().serializeToString(clone)}${scaleBar}${side}${text(40,1120,'Grundlage: UIS der LUBW · MLR (2026), dl-de/by-2-0 · © BKG (2026), dl-de/by-2-0 / LBM: CC BY 4.0 · Eigene Auswertung',14)}${text(40,1148,'Landwirtschaftsdarstellung: 50-m-Raster. Schutzgebietsgrenzen zur Anzeige vereinfacht; Flächenwerte aus unvereinfachten Geometrien.',14)}${text(40,1176,'Ortsnamen: GeoNames (CC BY 4.0), geonames.org · Bezugsfläche ohne Bodensee. Quellenlinks in SVG-Metadaten.',14)}</g></svg>`;
 }
 $('svgExport').onclick=()=>{download(new Blob([exportSvg()],{type:'image/svg+xml;charset=utf-8'}),`Schutzgebiete_${state.region}_${state.definition}.svg`);toast('SVG mit aktuellem Ausschnitt, Ebenen und Quellen exportiert.')};
 $('pngExport').onclick=async()=>{const btn=$('pngExport');btn.disabled=true;try{const url=URL.createObjectURL(new Blob([exportSvg()],{type:'image/svg+xml;charset=utf-8'}));const img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=url});const c=document.createElement('canvas');c.width=3200;c.height=2400;c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);const blob=await new Promise(resolve=>c.toBlob(resolve,'image/png'));if(!blob)throw Error('PNG konnte nicht erzeugt werden');download(blob,`Schutzgebiete_${state.region}_${state.definition}.png`);toast('PNG (3200 × 2400 Pixel) exportiert.')}catch(e){toast('PNG-Export fehlgeschlagen. Bitte SVG-Export verwenden.')}finally{btn.disabled=false}};
@@ -100,4 +104,5 @@ function validateDefinition(x){
 }
 $('dataUpload').onchange=async e=>{try{const f=e.target.files[0];if(!f)return;if(f.size>3000000)throw Error('Datei ist größer als 3 MB.');const def=validateDefinition(JSON.parse(await f.text()));D.definitions.custom=def;let o=$('customOption');if(!o){o=document.createElement('option');o.id='customOption';o.value='custom';$('definition').append(o)}o.textContent='Eigene Daten · '+def.title;state.definition='custom';$('definition').value='custom';if(!def.records[state.region])state.region='BW';$('region').value=state.region;$('removeCustom').hidden=false;$('importMessage').textContent='Definition geladen. Formale Prüfungen bestanden; keine amtliche Validierung.';render();toast('Eigene Definition geladen. Landwirtschaftsgeometrien sind für diesen Import nicht verfügbar.')}catch(err){$('importMessage').textContent=err.message}finally{e.target.value=''}};
 $('removeCustom').onclick=()=>{delete D.definitions.custom;$('customOption')?.remove();state.definition='fiona';$('definition').value='fiona';$('removeCustom').hidden=true;$('importMessage').textContent='Eigene Definition entfernt.';render()};
+new ResizeObserver(()=>drawCities()).observe($('map'));
 setView(padded(D.bounds));render();

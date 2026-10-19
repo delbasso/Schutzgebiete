@@ -1,0 +1,29 @@
+Städtenamen-Layer: Integration in die Deutschland-Erweiterung
+
+Die öffentliche Seite lädt places-bw.js (1.085 Orte, ca. 56 kB).
+places-de.js enthält 11.431 Orte aus demselben GeoNames-Datenstand und wird
+in der BW-Seite nicht geladen. Datenquelle, Lizenz und Schema stehen im Dateikopf.
+
+Für die Deutschland-Version:
+1. places-bw.js durch places-de.js als Script vor app.js ersetzen.
+2. Den Ursprung der Deutschland-Karte in ATLAS.placeTransform hinterlegen:
+   {origin:[ox/1000,oy/1000], crs:'EPSG:3035', units:'km'}
+   ox ist der westliche, oy der nördliche Ursprung des Raster-/SVG-Gitters in Metern.
+   Karteneinheiten müssen km sein: x=(Easting-ox)/1000, y=(oy-Northing)/1000.
+   Nicht den BW-Ursprung aus places-map.js übernehmen!
+3. place-labels.js unverändert wiederverwenden. Die Daten sind nach Einwohnerzahl
+   absteigend sortiert. Viewport und Transform stammen aus der jeweiligen Karte.
+4. Bei Ansicht, Zoom, Verschieben, Größenänderung oder Layerwechsel draw aufrufen.
+   Die BW-Integration in app.js zeigt die Aufrufstellen (drawCities, setView, render).
+5. Für Export mit festem Layout exportSize angeben und visibleIds aus der sichtbaren
+   Karte übergeben. So bleiben die gewählten Orte erhalten und die Schrift bleibt
+   unabhängig von der Bildschirmgröße lesbar. Bei Platzmangel kann eine Beschriftung
+   entfallen. SVG, PNG und Druck verwenden dieselbe exportSvg-Funktion.
+6. Quellen und GeoNames-CC-BY-4.0-Nennung im Fußbereich, Quellenfenster und Export
+   beibehalten. Die GeoNames-Population dient nur der Priorisierung und ist keine
+   aktuelle Bevölkerungsstatistik. Städte-/Gemeindegrenzen werden nicht abgebildet.
+
+Die bestehende Deutschland-Entwicklung in dashboard/dist wurde nicht verändert.
+Veröffentlichungsziel bleibt https://delbasso.github.io/Schutzgebiete/ (main / root).
+Nur geprüfte Dateien gezielt veröffentlichen; PUBLISHING_LOCAL.json und Screenshots
+sind lokale Arbeitsdateien und gehören nicht in die Veröffentlichung.

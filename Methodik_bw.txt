@@ -150,3 +150,24 @@ Für die Anzeige wurden Schutzgebiets- und Kreisgeometrien mit 20 m Toleranz ver
 Die Auswahl von NSG/WSG steuert die drei oberen Kennzahlen. Die Tabelle zeigt unabhängig davon alle Schutztypen. Die ausgewählte Region bestimmt die Bezugsfläche; beim Verschieben der Karte ändern sich die Kennzahlen nicht.
 
 Der JSON-Import nimmt vorberechnete Flächendefinitionen für dieselben Grenzen und dieselbe Schutzkulisse an. Er prüft Schema, positive Nenner, Flächenobergrenzen und Vereinigungsidentitäten. Er bestätigt weder die fachliche Richtigkeit noch die Herkunft der Nutzerdaten. Eigene Definitionen haben keine Landwirtschaftsgeometrie im Atlas. Es gibt keine automatische Quellenaktualisierung, keine serverseitige GIS-Neuberechnung und keine dauerhafte Speicherung importierter Daten.
+
+
+Städtenamen und Ortspunkte (19.10.2026)
+Quelle: GeoNames, https://www.geonames.org/ ; Download:
+https://download.geonames.org/export/dump/cities500.zip
+Lizenz: Creative Commons Attribution 4.0, https://creativecommons.org/licenses/by/4.0/
+Keine amtlichen Stadtgrenzen. Die Ortsdaten ändern keine Flächenkennzahlen.
+Auswahl Deutschland, Featurecodes PPL/PPLA/PPLA2/PPLA3/PPLA4/PPLC, ohne Stadtteile (PPLX).
+Baden-Württemberg: GeoNames-Verwaltungskennung 01, 1.085 Ortspunkte. Deutschland: 11.431.
+Population dient nur der Priorisierung; unterschiedliche Datenstände, keine Bevölkerungsstatistik.
+Koordinaten WGS84 nach EPSG:3035 transformiert; Speicherung in km mit Meterauflösung.
+Namensanpassungen: Munich -> München, Nuremberg -> Nürnberg, Freiburg -> Freiburg im Breisgau.
+Maßstabsabhängige Mindestbevölkerung: über 1,2 km/Pixel: 100.000; über 0,35: 50.000;
+über 0,12: 10.000; über 0,05: 2.500; darunter alle vorhandenen Orte.
+Beschriftungen werden nach Einwohnerzahl priorisiert, mit vier Positionen auf Kollisionen
+geprüft und bei Platzmangel ausgelassen. Maximal 160 je Ansicht; kein Vollständigkeitsanspruch.
+Die Ortspunkte bleiben an der Quellposition; nur die Beschriftung wird daneben versetzt.
+SVG/PNG und Druck übernehmen genau die in der aktuellen Ansicht platzierten Namen.
+Der Städtenamen-Layer lässt sich unabhängig von Kreisnamen ausschalten.
+Für diese BW-Seite werden nur places-bw.js und das Beschriftungsmodul geladen (ca. 60 kB).
+places-de.js ist separat für die spätere Deutschland-Ansicht vorbereitet, wird hier nicht geladen.

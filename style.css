@@ -5,3 +5,22 @@
 .brand{font-size:20px;letter-spacing:0;font-weight:600;line-height:1.3}.brand small{font-size:14px;margin-top:5px}.site-title{display:block}@media(max-width:720px){.brand{font-size:16px;max-width:68%}.brand small{font-size:12px}header{min-height:86px;height:auto;padding-top:12px;padding-bottom:12px}}
 
 [hidden]{display:none!important}
+
+/* Keep the initial map inside the viewport; details follow below it. */
+header{height:auto;min-height:64px;padding:10px 24px;gap:20px}
+.brand{font-size:18px}.brand small{font-size:11px;margin-top:2px}
+.scope-switch{display:flex;align-items:center;gap:10px;margin-left:auto}
+.scope-switch .field{margin:0;white-space:nowrap;font-size:12px}
+.scope-switch select{width:210px;padding:7px 10px;font-weight:650;border-color:#8ca698}
+.workspace{padding:12px 20px 24px}.workspace-top{min-height:44px;margin-bottom:10px;align-items:center}
+.workspace-top h2{font-size:22px;margin:0}.controls{padding:12px 20px}
+.controls>.field:first-child{margin-top:0}
+.map-wrap{height:var(--map-panel-height,calc(100dvh - 150px));padding-bottom:38px}
+#map{height:100%;width:100%}.map-caption{bottom:44px}
+.map-legend{min-height:38px;padding:9px 12px;gap:12px}
+#loadStatus{position:absolute;top:12px;left:64px;right:12px;z-index:2;margin:0;background:#fff;box-shadow:0 2px 12px #0001}
+body.initial-loading #map,body.initial-loading .metrics{visibility:hidden}
+.metrics{margin-top:14px;gap:10px}.metrics article{padding:10px 14px}
+.metrics strong{font-size:23px;letter-spacing:-.5px;margin:0}.metrics span{font-size:11px}.metrics small{font-size:10px}
+@media(max-width:900px){header{gap:12px;padding:8px 16px}.brand{font-size:16px}.scope-switch .field{display:none}.scope-switch select{width:185px}.workspace{padding:12px}.exports button{padding:6px 8px}}
+@media(max-width:720px){header{flex-wrap:wrap;min-height:0}.brand{max-width:none;flex:1}.scope-switch{order:3;width:100%;margin:0}.scope-switch .field{display:block}.scope-switch select{flex:1;width:auto}main{display:flex}.workspace{order:0}.controls{order:1;border-top:1px solid var(--line)}.workspace-top{min-height:40px}.workspace-top h2{font-size:19px}.metrics strong{font-size:20px}.metrics article{padding:8px}.map-wrap{padding-bottom:48px}.map-legend{min-height:48px;gap:6px 10px;font-size:9px}.map-caption{display:none}}

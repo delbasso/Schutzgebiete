@@ -92,7 +92,7 @@ async function switchScope(scope){
  try{if(scope==='DE'&&!window.ATLAS_DE)await loadDataScript('data-de.js');
  const target=scope==='DE'?window.ATLAS_DE:BW_DATA;await Promise.all([ensureRasters(target,target.defaultDefinition),ensureVectors(target),target.root==='DE'&&!window.ATLAS_PLACES_DE?loadDataScript('places-de.js'):Promise.resolve()]);
  D=target;sources=[...(D.sources||BW_SOURCES),['Städte und Orte · GeoNames','Ortspunkte aus cities500, Abruf 19.10.2026; CC BY 4.0. Einwohnerzahlen dienen nur der Beschriftungspriorität. Keine Stadtgrenzen oder vollständige Ortsliste.','https://www.geonames.org/export/','Quelle und Download']];configureData();$('loadStatus').hidden=true;
- }catch(e){select.value=D.root;$('loadStatus').textContent=e.message+' Die bisherige Ansicht bleibt verfügbar.';}finally{select.disabled=false;$('definition').disabled=false}
+ }catch(e){select.value=D.root;$('loadStatus').textContent=e.message+' Die bisherige Ansicht bleibt verfügbar.';}finally{document.body.classList.remove('initial-loading');select.disabled=false;$('definition').disabled=false}
 }
 $('scope').onchange=e=>switchScope(e.target.value);
 $('federal').onchange=e=>{fillRegions(e.target.value);chooseRegion(e.target.value==='all'?D.root:e.target.value)};
@@ -150,4 +150,13 @@ function validateDefinition(x){
 $('dataUpload').onchange=async e=>{try{const f=e.target.files[0];if(!f)return;if(f.size>12000000)throw Error('Datei ist größer als 12 MB.');const def=validateDefinition(JSON.parse(await f.text()));D.definitions.custom=def;let o=$('customOption');if(!o){o=document.createElement('option');o.id='customOption';o.value='custom';$('definition').append(o)}o.textContent='Eigene Daten · '+def.title;state.definition='custom';$('definition').value='custom';if(!def.records[state.region])state.region=D.root;$('region').value=state.region;$('removeCustom').hidden=false;$('importMessage').textContent='Definition geladen. Formale Prüfungen bestanden; keine amtliche Validierung.';render();toast('Eigene Definition geladen. Landwirtschaftsgeometrien sind für diesen Import nicht verfügbar.')}catch(err){$('importMessage').textContent=err.message}finally{e.target.value=''}};
 $('removeCustom').onclick=()=>{delete D.definitions.custom;$('customOption')?.remove();state.definition=D.defaultDefinition;$('definition').value=state.definition;$('removeCustom').hidden=true;$('importMessage').textContent='Eigene Definition entfernt.';render()};
 new ResizeObserver(()=>drawCities()).observe($('map'));
-configureData();$('scope').value='DE';switchScope('DE');
+function fitMapToViewport(){
+ const header=document.querySelector('body>header'),top=document.querySelector('.workspace-top');
+ // Document layout is independent of scroll position, so scrolling never resizes the map.
+ const available=window.innerHeight-header.offsetHeight-top.offsetHeight-38;
+ document.documentElement.style.setProperty('--map-panel-height',Math.max(120,available)+'px');
+}
+new ResizeObserver(fitMapToViewport).observe(document.querySelector('body>header'));
+new ResizeObserver(fitMapToViewport).observe(document.querySelector('.workspace-top'));
+window.addEventListener('resize',fitMapToViewport);fitMapToViewport();
+configureData();document.body.classList.add('initial-loading');$('regionTitle').textContent='Deutschland';$('scope').value='DE';switchScope('DE');

@@ -60,20 +60,17 @@ function render(){drawMap();updateStats();drawCities()}
 function fillRegions(filter='all'){
  $('region').replaceChildren();const add=(id,name)=>{const o=document.createElement('option');o.value=id;o.textContent=name;$('region').append(o)};
  add(D.root,'Ganz '+D.rootName);
- for(const s of D.states||[])if(filter==='all'||s.id===filter)add(s.id,s.name+' · Bundesland');
  for(const c of [...D.counties].filter(c=>filter==='all'||'state:'+c.state_id===filter).sort((a,b)=>a.name.localeCompare(b.name,'de')))add(c.id,c.name+' · '+c.kind);
 }
 function chooseRegion(id,zoom=true){
  state.region=id;
- if(D.root==='DE'&&id.startsWith('county:')){const c=D.counties.find(c=>c.id===id);if($('federal').value!=='all'&&$('federal').value!=='state:'+c.state_id){$('federal').value='state:'+c.state_id;fillRegions($('federal').value)}}
- if(D.root==='DE'&&id.startsWith('state:')&&$('federal').value!=='all'&&$('federal').value!==id){$('federal').value=id;fillRegions(id)}
  $('region').value=id;if(zoom)setView(padded(id===D.root?D.bounds:[...(D.states||[]),...D.counties].find(c=>c.id===id).bounds,.12));render()
 }
 function configureData(){
+ $('scopeHelp').textContent=D.root==='DE'?'Deutschlandweite Übersicht mit einheitlicher Bundeskulisse.':'Detailansicht mit landesspezifischen Daten (LUBW / FIONA). Werte können von der Deutschlandübersicht abweichen.';
  $('definition').replaceChildren();for(const d of Object.values(D.definitions)){const o=document.createElement('option');o.value=d.id;o.textContent=d.title;if(d.custom)o.id='customOption';$('definition').append(o)}
  state.definition=D.defaultDefinition;$('definition').value=state.definition;state.region=D.root;state.view=padded(D.bounds);
- $('federalField').hidden=D.root!=='DE';$('stateLayer').hidden=D.root!=='DE';
- $('federal').replaceChildren(new Option('Alle Bundesländer','all'));for(const s of D.states||[])$('federal').append(new Option(s.name,s.id));
+ $('stateLayer').hidden=D.root!=='DE';
  fillRegions();$('region').value=D.root;$('removeCustom').hidden=!D.definitions.custom;$('importMessage').textContent='';
  $('rasterNote').textContent=`Ackerland ist Teil der Landwirtschaftsfläche. Kartendarstellung: ${D.rasterSize}-m-Raster; Kennzahlen aus Originalgeometrien.`;
  $('protectionNote').textContent=D.root==='DE'?'Bundeskulisse: BfN-NSG 2024, Auswahl STATUS=1 (32 Einträge mit STATUS=2 ausgeschlossen), und festgesetzte Trinkwasserschutzgebiete von WasserBLIcK/BfG. WSG-Länderlieferungen mit unterschiedlichen Datenständen (2017–2026), Abruf 19.10.2026. Kein einheitlicher Rechtsstand.':'LUBW-Schutzkulisse: Abruf 19.10.2026. Kein einheitlicher historischer Datenstand. Ein Gebietsstatus bedeutet keine überall gleichen Bewirtschaftungsauflagen.';
@@ -95,7 +92,6 @@ async function switchScope(scope){
  }catch(e){select.value=D.root;$('loadStatus').textContent=e.message+' Die bisherige Ansicht bleibt verfügbar.';}finally{document.body.classList.remove('initial-loading');select.disabled=false;$('definition').disabled=false}
 }
 $('scope').onchange=e=>switchScope(e.target.value);
-$('federal').onchange=e=>{fillRegions(e.target.value);chooseRegion(e.target.value==='all'?D.root:e.target.value)};
 fillRegions();
 $('definition').addEventListener('change',async e=>{const data=D,key=e.target.value;$('definition').disabled=true;try{await ensureRasters(data,key);if(data===D){state.definition=key;render()}}catch(err){$('definition').value=state.definition;toast(err.message)}finally{$('definition').disabled=false}});$('region').addEventListener('change',e=>chooseRegion(e.target.value));
 for(const id of layerIds)$(id).addEventListener('change',render);$('opacity').addEventListener('input',render);

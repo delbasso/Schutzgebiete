@@ -49,3 +49,5 @@ header{justify-content:flex-start}.scope-switch{margin-left:20px}
 header #sourcesBtn{font-size:12px;padding:5px 8px;white-space:nowrap}
 @media(max-width:900px){header{flex-wrap:wrap}.scope-switch{margin-left:0}header #sourcesBtn{font-size:11px}}
 @media(max-width:720px){.scope-switch{order:1;width:auto;flex:1;min-width:180px}.scope-switch .field{display:none}header #sourcesBtn{order:2;padding:5px 2px;font-size:10px}}
+
+.controls .scope-switch{display:block;margin:0;width:100%;min-width:0}.controls .scope-switch .field{display:block;margin:0 0 7px}.controls .scope-switch select{width:100%;font-size:12px;font-weight:600;padding:9px 7px}

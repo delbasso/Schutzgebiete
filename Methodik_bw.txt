@@ -1,0 +1,152 @@
+Wasser- und Naturschutzgebiete in Baden-Württemberg
+Methodik, Ergebnisse, Datenprüfung und Roadmap
+Bearbeitungs- und Abrufdatum: 19.10.2026
+
+Ergebnis und Geltungsbereich
+
+Die Karte zeigt verordnete Naturschutzgebiete (NSG), festgesetzte Wasserschutzgebiete (WSG) und ihre Überschneidungen in Baden-Württemberg. Die beiden Gebietstypen sind getrennt und zusammen ausgewertet. Gemeinsam geschützte Flächen werden nur einmal gezählt.
+
+Die landwirtschaftlichen Hauptkennzahlen beziehen sich auf öffentlich verfügbare, anonymisierte FIONA-Antragsflächen 2022. Sie sind keine vollständige Erhebung sämtlicher landwirtschaftlich genutzter Flächen und keine Rekonstruktion der agrarstatistischen LF. Fehlende, nicht beantragte Flächen werden weder geschätzt noch mit einem externen Statistiknenner vermischt.
+
+Dies ist die im ursprünglichen Auftrag ausdrücklich zugelassene Baden-Württemberg-Variante. Es wurden keine Deutschlandwerte aus Baden-Württemberg hochgerechnet. Der bundesweite BfG-Endpunkt lieferte bei direktem Abruf HTTP 404, der BfN-REST-Endpunkt HTTP 403. Das belegt die Zugriffshindernisse in dieser Ausführung, nicht eine grundsätzliche Unmöglichkeit einer Deutschlandauswertung. Für BW wurden die originären amtlichen Landesdaten der LUBW verwendet.
+
+Hauptergebnisse
+
+Naturschutzgebiete: Landesfläche 2,47 %; beantragte Landwirtschaft 1,73 %; beantragtes Ackerland 0,28 %.
+Wasserschutzgebiete: Landesfläche 26,76 %; beantragte Landwirtschaft 29,26 %; beantragtes Ackerland 32,33 %.
+Überschneidung NSG und WSG: Landesfläche 0,53 %; beantragte Landwirtschaft 0,49 %; beantragtes Ackerland 0,08 %.
+Mindestens einer der beiden Typen: Landesfläche 28,70 %; beantragte Landwirtschaft 30,50 %; beantragtes Ackerland 32,53 %.
+Nur NSG: Landesfläche 1,94 %; beantragte Landwirtschaft 1,24 %; beantragtes Ackerland 0,20 %.
+Nur WSG: Landesfläche 26,23 %; beantragte Landwirtschaft 28,77 %; beantragtes Ackerland 32,25 %.
+
+Bezugsfläche Land: 3.574.888 ha.
+Bezugsfläche beantragte Landwirtschaft: 1.412.152 ha.
+Bezugsfläche beantragtes Ackerland: 804.260 ha.
+Gemeinsame Schutzfläche: 1.025.884 ha.
+
+Die CSV enthält ungerundete Rechenwerte in Hektar und Prozent. Ihre vielen Dezimalstellen sind Rechenpräzision, keine Aussage über die Genauigkeit der Ausgangsdaten. Die Karte rundet Prozentwerte auf zwei Nachkommastellen.
+
+Definitionen und zeitlicher Bezug
+
+1. Landesfläche: BKG VG250, Stand 01.01.2026, Ebene Land, Landesschlüssel 08, Geofaktor GF=4. Die Bodenseeflächen sind ausgeschlossen; andere Binnengewässer sind im Landesteil enthalten. Grenzlinien im Maßstab 1:250.000 sind generalisiert. Alle Zähler und Nenner werden an derselben Grenze abgeschnitten.
+
+2. Schutzgebiete: LUBW-WFS, vollständig abgerufen am 19.10.2026. NSG: Status verordnet. WSG: STATUS_SCHUTZGEBIET=1, festgesetzt. Geplante, aufgehobene, im Verfahren befindliche und nur fachtechnisch abgegrenzte WSG werden ausgeschlossen. Andere Naturschutzkategorien wie Landschaftsschutzgebiete, FFH, Vogelschutzgebiete und Nationalparke werden nicht hinzuaddiert.
+
+3. FIONA-Landwirtschaft: Vereinigung der Nutzcode-Arten AL, GL und DK nach der amtlichen Codeliste zum Gemeinsamen Antrag 2022. Die Codeliste definiert diese Arten für Direktzahlungen. Enthalten sind auch entsprechende Brachen und förderrechtlich zugeordnete Landschaftselemente. Art S (nicht landwirtschaftlich genutzt) ist ausgeschlossen, auch wenn solche Flächen im Antragsdatensatz vorkommen. Die Aufnahme von Brachen und Landschaftselementen bedeutet nicht, dass überall aktive Pflanzenproduktion stattfindet.
+
+4. FIONA-Ackerland: Art AL derselben Codeliste. Insbesondere sind Ackergras und nach dieser Liste als AL geführte Brachen enthalten. Hopfen ist dort grundsätzlich eine Dauerkultur. Das ist eine andere Abgrenzung als eine rein bildbasierte Ackererkennung.
+
+5. Die Karte verschneidet die 2026 abgerufene Schutzgebietskulisse mit den 2022 beantragten Nutzungen. Sie beantwortet damit, welcher Anteil dieser Antragsflächen in der abgerufenen Kulisse liegt. Sie behauptet weder eine einheitliche Momentaufnahme 2022 noch eine vollständige Landnutzungserhebung 2026.
+
+6. Der Schutzgebietsstatus beschreibt keine einheitliche Bewirtschaftungsbeschränkung. WSG-Zonen und einzelne Gebietsverordnungen können unterschiedliche Anforderungen haben; diese wurden nicht als Belastungs- oder Verbotsintensität klassifiziert.
+
+Berechnung und Qualitätskontrolle
+
+Alle Flächen werden in ETRS89 / LAEA Europe (EPSG:3035) berechnet. Fläche in ha = Fläche in Quadratmetern / 10.000.
+Für eine Bezugsfläche F und Schutzfläche S: Anteil = 100 * Fläche(F geschnitten S) / Fläche(F).
+Gemeinsame Schutzfläche S = Vereinigung(NSG, WSG), nicht Summe der Rohflächen.
+
+Die Verarbeitung verwendet disjunkte 25-km-Quadrate; die noch nicht berechneten FIONA-Quadrate wurden zur Beschleunigung weiter in 5-km-Quadrate geteilt. Bereits berechnete Elternquadrate werden dabei vollständig übersprungen. Innerhalb jedes Quadrates werden die Geometrien exakt vereinigt und geschnitten. Quadratränder haben keine Fläche; deshalb können die Ergebnisse ohne Doppelzählung summiert werden. Es findet keine Rasterisierung, Vereinfachung oder Präzisionsrundung der Berechnungsgeometrien statt. Linien und Punkte, die beim Schneiden auf Grenzen entstehen, tragen keine Fläche bei und werden aus Polygonoperationen entfernt. Ein unabhängiger Vergleich beider Kachelgrößen in einem Bereich mit 24.307 Objekten ergab bei den geschützten Flächen höchstens 0,046 m² Differenz.
+
+WFS-Vollständigkeit: 1062 NSG-Objekte und 3165 WSG-Objekte gemeldet und geliefert. Nach Statusfilter bleiben 1062 NSG und 2234 WSG. Die ausgewählten WSG-IDs stimmen mit dem separat heruntergeladenen LUBW-ZIP überein. Der symmetrische Flächenunterschied der vereinigten WSG-Geometrien beider Zugänge beträgt im durchgeführten Vergleich 0 m².
+
+FIONA-Vollständigkeit: 1278186 Objekte angefordert, heruntergeladen und anhand eindeutiger Objekt-IDs geprüft. Alle vorkommenden Nutzcodes wurden klassifiziert. Nach Grenzschnitt verbleiben 1278114 Flächenobjekte. Von 610 als nicht gültig erkannten Einträgen hatten 609 eine reparierbare Geometrie; 1 Eintrag hatte keine Geometrie (Objekt-ID [1171580]). Dieser Eintrag kann nicht räumlich ausgewertet werden; seine Fläche ist unbekannt. Bei den reparierbaren Geometrien betrug die Summe der absoluten Flächenänderungen 1,326 m², die größte einzelne Änderung 0,443 m². Die Prüfdateien dokumentieren diese Änderungen und die innerhalb der Kategorien entfernten Überlappungen.
+
+Für jede Bezugsfläche wurden überprüft: 0 <= geschützte Fläche <= Bezugsfläche; gültige Polygonvereinigungen; NSG + WSG - Überschneidung = gemeinsame Schutzfläche. Die Berechnung entfernt auch Mehrfachüberlagerungen innerhalb eines Gebietstyps und innerhalb einer landwirtschaftlichen Kategorie.
+
+Die unabhängig berechneten Vereinigungs- und Schnittflächen weisen kleine numerische/topologische Restabweichungen auf. In der landwirtschaftlichen Hauptkennzahl beträgt die Identitätsabweichung insgesamt rund 1,5 m², beim Ackerland weniger als 0,001 m². Für die zusätzliche Einzelklasse GL beträgt sie rund 17,0 m², in einem einzelnen Rechenstreifen maximal 55,6 m². Diese Restabweichungen sind protokolliert; die unabhängig geschnittene Vereinigungsfläche wurde nicht durch eine Formel ersetzt. Die Prüfung erlaubt für GL höchstens 100 m² pro Streifen, für die Hauptkennzahlen höchstens 10 m². Die auf zwei Nachkommastellen dargestellten Prozentwerte werden dadurch nicht beeinflusst. Die vollständige Bearbeitung aller geplanten Rechenkacheln wurde separat geprüft.
+
+Unabhängiger Plausibilitätsmaßstab: Die LEL-Übersicht für Baden-Württemberg nennt für 2022 insgesamt 1.474.631 ha Antragsfläche LF. Die hier räumlich berechnete Vereinigung liegt um 62.479 ha beziehungsweise 4,24 % darunter. Diese Zahl ist ein Vergleichswert, kein Nenner der räumlichen Rechnung. Abweichungen können aus Status-/Nutzcodeabgrenzungen, räumlicher Zuordnung, außerhalb von BW liegenden Antragsflächen oder dem Veröffentlichungsumfang entstehen. Die genaue Ursache der gesamten Differenz ist nicht nachgewiesen; die winzigen Geometriereparaturen erklären sie nicht. Eine Übereinstimmung wird nicht erzwungen. Die Werte gelten deshalb ausdrücklich nur für die veröffentlichten räumlich auswertbaren Antragsflächen.
+
+Vergleich mit dem Landbedeckungsmodell
+
+Zusätzlich wurde das bundesweite LBM-DE2021 für Baden-Württemberg ausgewertet. Landwirtschaft ist hier die Vereinigung der Landnutzungen N211 (intensive Landwirtschaft) und N214 (extensive Nutzung). N214 kann auch Landschaftspflege und aufgegebene Nutzungen umfassen. N211 kann landwirtschaftliche Betriebsbestandteile enthalten. Diese Abgrenzung ist daher nur eine geografische Näherung.
+LBM-Ackerland ist B211 innerhalb der genannten Landwirtschaftsfläche. B211-Flächen mit abweichender Landnutzung werden als ARABLE_OTHER_USE gesondert bilanziert. Hopfen B224 wird separat ausgewiesen und nicht unbemerkt dem Ackerland zugeschlagen.
+Die Dokumentation nennt 1 ha Mindestkartierfläche für neu erfasste Änderungen und 15 m Mindestkartierbreite. Kleine oder schmale Nutzungen können daher anders repräsentiert sein als in den FIONA-Schlägen.
+
+Naturschutzgebiete: FIONA Landwirtschaft 1,73 %, LBM-Näherung 1,68 %; FIONA Ackerland 0,28 %, LBM-Ackerland 0,30 %.
+Wasserschutzgebiete: FIONA Landwirtschaft 29,26 %, LBM-Näherung 28,45 %; FIONA Ackerland 32,33 %, LBM-Ackerland 32,29 %.
+Überschneidung NSG und WSG: FIONA Landwirtschaft 0,49 %, LBM-Näherung 0,45 %; FIONA Ackerland 0,08 %, LBM-Ackerland 0,08 %.
+Mindestens einer der beiden Typen: FIONA Landwirtschaft 30,50 %, LBM-Näherung 29,69 %; FIONA Ackerland 32,53 %, LBM-Ackerland 32,51 %.
+
+LBM-Abdeckung der verwendeten Landesfläche: 99,99248 %. Nicht vom LBM abgedeckte Restfläche: 268,91 ha. Diese Kontrolle zeigt räumliche Modell-/Grenzunterschiede; sie ist keine thematische Genauigkeitsprüfung der Nutzungsklassen.
+
+Warum die frühere KI-Antwort nicht genügte
+
+Sie erkannte die erforderliche GIS-Verschneidung korrekt und verzichtete auf erfundene Prozentwerte. Sie lieferte jedoch weder die Karte noch die zentralen Flächenanteile und prüfte die tatsächlichen Datenzugänge nicht bis zum Download. Die Aufgabe wurde zu früh an den Nutzer zurückgegeben. Besonders wichtig fehlte die saubere Trennung zwischen Agrarstatistik, Landbedeckung, Förderanträgen und deren jeweiligen Flächendefinitionen. Ein besser formulierter Prompt allein ersetzt diese Datenarbeit nicht.
+
+Aus dem Antworttext lässt sich nicht feststellen, welche Rechenwerkzeuge, Netzwerkzugänge oder Dateigrößenlimits Claude tatsächlich zur Verfügung standen. Ein pauschales Urteil über das Modell wäre daher unbegründet. Der abschließende Verweis auf GPTDeutsch.com hilft weder bei der amtlichen Datenbeschaffung noch bei der verlangten Auswertung und gehört fachlich nicht zur Lösung.
+
+Roadmap und verbleibende Möglichkeiten
+
+Erledigt: Anforderungen und Definitionsprobleme prüfen; amtliche Downloadwege praktisch testen; vollständigen BW-Datenbestand beschaffen; Status- und Vollständigkeitskontrollen; landwirtschaftliche Codes anhand der amtlichen Jahresliste klassifizieren; räumliche Verschneidung ohne Doppelzählung; Vergleich mit einer alternativen Landnutzungsgrundlage; Karte und Ergebnistabellen erstellen.
+
+Für eine spätere Deutschlandfassung: Bundesweite Schutzgebiets-Vektoren über einen funktionierenden amtlichen Zugang oder harmonisierte Landesdaten beschaffen. Landwirtschaftliche Daten länderübergreifend auf dasselbe Jahr und dieselben Klassen abstimmen. Für jedes Land Lieferumfang und nicht erfasste Flächen dokumentieren. Erst danach bundesweite Summen bilden.
+
+Für exakt agrarstatistisch definierte LF: Ein passender vollständiger räumlicher Datensatz beziehungsweise eine amtliche Sonderauswertung ist erforderlich. Weder die Destatis-Gesamtzahl noch eine zusätzliche Softwarefreigabe erzeugt die fehlende räumliche Zuordnung. Hilfreich wären die gewünschte fachliche Definition, ein festes Bezugsjahr und gegebenenfalls Zugang zu passenden Forschungs-/Verwaltungsdaten.
+
+Plugins und Berechtigungen: Es war kein zusätzliches Plugin nötig. GIS-Bibliotheken wurden ausschließlich im Projektordner installiert. Der direkte Netzwerkzugriff für Datenabruf und Installation wurde über die vorhandene Freigabefunktion ausgeführt. Eine pauschale Freigabe sämtlicher Konten oder Dateien ist für diesen Workflow nicht erforderlich.
+
+Priorisierte nächste Entscheidungen: (1) Reicht die ausgeführte BW-Variante oder ist Deutschland zwingend? (2) Soll der Nenner Förderantragsfläche, kartierte Nutzung oder exakt agrarstatistische LF sein? (3) Soll eine historische gemeinsame Momentaufnahme oder eine aktuelle Schutzgebietskulisse mit älteren Nutzungen untersucht werden? Erst danach lohnt die Beschaffung zusätzlicher Daten. Für eine Veröffentlichung sind Datenverfügbarkeit und zeitliche Übereinstimmung vorrangig; ein weiteres Plugin löst diese fachlichen Fragen nicht.
+
+Präzisierter Folgeprompt
+
+„Erstelle eine nachvollziehbare GIS-Auswertung von festgesetzten Wasserschutzgebieten und verordneten Naturschutzgebieten für [Deutschland/Baden-Württemberg]. Verwende amtliche Vektordaten und dokumentiere Abrufdatum, Datenstand, Statusfilter und Lizenz. Definiere vor der Berechnung Landesfläche, Landwirtschaftsfläche und Ackerland anhand der tatsächlich verfügbaren Daten. Kennzeichne Förderantragsflächen oder Landbedeckungsmodelle ausdrücklich als solche; setze sie nicht mit der agrarstatistischen LF gleich. Berechne NSG, WSG, ihre Schnittmenge und ihre Vereinigung jeweils in Hektar und Prozent, ohne Doppelzählung, mit demselben räumlichen Zuschnitt und einem flächentreuen Koordinatensystem. Liefere eine farbige Karte, eine CSV, Quellen und ein reproduzierbares Prüfprotokoll. Prüfe Downloadvollständigkeit, Geometrien und Flächenidentitäten. Wenn der gewünschte Nenner oder ein Bundesdatensatz nicht verfügbar ist, erläutere die konkrete Lücke und setze die fachlich klar bezeichnete BW-Alternative um. Erfinde keine flächenbezogenen Kennzahlen und vermische keine externen Statistiknenner mit unvollständigen räumlichen Zählern.“
+
+Dateien und Reproduzierbarkeit
+
+Hauptkarte: Schutzgebiete_Baden_Wuerttemberg.png und .svg
+Vergleichskarte: Schutzgebiete_Baden_Wuerttemberg_LBM2021.png und .svg
+Hauptergebnisse mit deutschen Spalten: Ergebnisse_Baden_Wuerttemberg.csv
+Ausführliche FIONA-Ergebnisse: flaechenanteile_fiona_bw.csv
+Ausführliche LBM-Ergebnisse: flaechenanteile_bw.csv
+Nutzcodebilanz: fiona_nutzcodes_flaechen.csv
+Prüfprotokolle: boundary_protection_audit.json, fiona_audit.json, fiona_repair_audit.json, landuse_audit.json
+Rechenprogramme: ../scripts/prepare_bw.py, analyse_fiona.py, recalculate_fiona_parallel.py, finalize_fiona_checkpoints.py, audit_fiona_repairs.py, analyse_lbm_tiled.py, tiled_stats.py, render_map.py, write_report.py, validate_final.py.
+Ausgangsdaten und klassifizierte Geometrien liegen im Unterordner ../data. Die große LBM-Datei wird nur für die Vergleichsrechnung benötigt.
+
+Quellen und Nutzungsbedingungen
+
+LUBW NSG, originäre Landesdaten, Datenlizenz Deutschland Zero 2.0:
+https://rips-metadaten.lubw.de/trefferanzeige?docuuid=1a6a350d-97b6-4c73-8558-704d9fe8a29e
+https://rips-gdi.lubw.baden-wuerttemberg.de/arcgis/services/wfs/Naturschutzgebiet/MapServer/WFSServer?service=WFS&request=GetCapabilities
+
+LUBW WSG, Grundlage: Daten aus dem Umweltinformationssystem (UIS) der LUBW Landesanstalt für Umwelt Baden-Württemberg:
+https://rips-metadaten.lubw.de/trefferanzeige?docuuid=ec2d7bcc-1f56-4596-bbc0-459ddb6a1a82
+https://rips-gdi.lubw.baden-wuerttemberg.de/arcgis/services/wfs/Wasserschutzgebiet/MapServer/WFSServer?service=WFS&request=GetCapabilities
+https://www.lubw.baden-wuerttemberg.de/umweltinformationssystem/nutzungsvereinbarung
+
+FIONA 2022, Datengrundlage: MLR (2026), Datenlizenz Deutschland - Namensnennung - Version 2.0, https://mlr.baden-wuerttemberg.de:
+https://owsproxy.lgl-bw.de/owsproxy/wfs/WFS_LW-BW_FIONA_Flaecheninformation?REQUEST=GetCapabilities&SERVICE=WFS
+https://www.govdata.de/dl-de/by-2-0
+https://data.gov.de/suche/daten/flacheninformationen-und-online-antrag-baden-wurttemberg-fiona-ga-2022
+
+Amtliche Nutzcodeliste 2022:
+https://foerderung.landwirtschaft-bw.de/site/pbs-bw-rebrush2024/get/documents_E-178798993/MLR.LEL/PB5Documents/mlr/GA/GA_022_intern/fiona-archiv/2022/Merkblaetter/GA%20-%20Nutzcodeliste%202022.pdf
+
+LEL Vergleichsstatistik Gemeinsamer Antrag 2022:
+https://lr.landwirtschaft-bw.de/site/pbs-bw-rebrush2024/get/documents_E-2134501948/MLR.LEL/PB5Documents/lel/Abteilung_3/Agrarstuktur/Statistik/A_Dienstbezirke/2022_BW/00%20Land%20BW%202022.pdf
+
+BKG LBM-DE2021, © BKG (2026), CC BY 4.0, eigene Auswertung:
+https://www.bkg.bund.de
+https://creativecommons.org/licenses/by/4.0/
+https://sgx.geodatenzentrum.de/web_public/gdz/dokumentation/deu/lbm-de2021.pdf
+https://sgx.geodatenzentrum.de/web_public/gdz/datenquellen/datenquellen_lbm-de2021.pdf
+
+BKG VG250, © BKG (2026), dl-de/by-2-0, eigene Auswertung:
+https://gdz.bkg.bund.de/index.php/default/verwaltungsgebiete-1-250-000-stand-01-01-vg250-01-01.html
+https://sgx.geodatenzentrum.de/web_public/gdz/datenquellen/datenquellen_vg_nuts.pdf
+
+Methodischer Unterschied zwischen Flächenstatistik und agrarstatistischer LF:
+https://www.destatis.de/DE/Themen/Branchen-Unternehmen/Landwirtschaft-Forstwirtschaft-Fischerei/Flaechennutzung/Methoden/unterscheidung-flaechennutzung.html
+
+
+Ergänzung: Interaktives Dashboard, 19.10.2026
+
+Alle 44 Land- und Stadtkreise stammen aus derselben VG250-Ausgabe 01.01.2026. Ihre Vereinigungsfläche entspricht der verwendeten Landesfläche; Lücken und Doppelzählungen wurden geprüft. Die Kreiskennzahlen wurden mit den unvereinfachten Flächen separat in EPSG:3035 berechnet. Die größte Differenz zwischen aufsummierten Kreiswerten und Landesrechnung beträgt für FIONA rund 0,00102 ha, für LBM weniger als 0,00001 ha.
+
+Für die Anzeige wurden Schutzgebiets- und Kreisgeometrien mit 20 m Toleranz vereinfacht und Koordinaten auf 10 m gerundet. Landwirtschaft und Ackerland werden als 50-m-Raster angezeigt (Zellmittelpunktverfahren). Kleine oder schmale Flächen können darin fehlen; Rasterflächen sind ausdrücklich keine Rechenbasis. Die SVG-Exporte enthalten die Landwirtschaftsrasterschichten als eingebettete PNGs, die übrigen Ebenen als Vektoren.
+
+Die Auswahl von NSG/WSG steuert die drei oberen Kennzahlen. Die Tabelle zeigt unabhängig davon alle Schutztypen. Die ausgewählte Region bestimmt die Bezugsfläche; beim Verschieben der Karte ändern sich die Kennzahlen nicht.
+
+Der JSON-Import nimmt vorberechnete Flächendefinitionen für dieselben Grenzen und dieselbe Schutzkulisse an. Er prüft Schema, positive Nenner, Flächenobergrenzen und Vereinigungsidentitäten. Er bestätigt weder die fachliche Richtigkeit noch die Herkunft der Nutzerdaten. Eigene Definitionen haben keine Landwirtschaftsgeometrie im Atlas. Es gibt keine automatische Quellenaktualisierung, keine serverseitige GIS-Neuberechnung und keine dauerhafte Speicherung importierter Daten.
